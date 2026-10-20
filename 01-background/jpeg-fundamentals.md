@@ -133,7 +133,7 @@ DCT stands for **Discrete Cosine Transform**.
 
 The easiest way for me to think about it is:
 
-> it changes an 8×8 block from pixel values into frequency values.
+> A mathematical technique used to describe an image in terms of its patterns rather than its individual pixel values.
 
 So instead of describing a block directly using its pixels, JPEG describes how much low-frequency and high-frequency information is inside it.
 
@@ -142,6 +142,10 @@ pixels → DCT → frequency coefficients
 ```
 
 ### What does frequency mean here?
+It means how quickly brightness changes across an image.
+- Low frequency: Smooth areas, gradual shading, broad shapes.
+- High frequency: Sharp edges, fine textures, tiny details, and sometimes noise.
+For example, a person's forehead may contain smooth shading (low frequency), while individual eyebrow hairs contain high-frequency details.
 
 A smooth area changes slowly, so it has more low-frequency information.
 
@@ -162,11 +166,11 @@ Examples:
 - grass
 - fine texture
 
-After DCT, we still get an 8×8 matrix.
+After DCT, we still get an 8×8 matrix containing 64 numbers called coefficients.
 
 The top-left value is called the **DC coefficient**. It is related to the overall brightness of the block.
 
-The rest are **AC coefficients**, which describe the changes and details inside the block.
+The other 63 numbers are **AC coefficients**, which describe the changes and details inside the block.
 
 Very roughly:
 
@@ -243,7 +247,45 @@ So for me the main distinction is:
 DCT          = changes representation
 Quantization = loses precision
 ```
+The software doesn't randomly pick a value from the quantization table, and it doesn't divide individual pixels. Instead, it divides each DCT coefficient by the number at the exact same position in the quantization table.
+```text
+Example:
+Step 1: We have two 8×8 matrices
+After DCT, imagine the top-left part of our DCT matrix looks like this:
+DCT coefficients
+160 55 30
+48  36 14
+28  13 8
+```
+```text
+Quantization table
+16 11 10
+12 12 14
+14 13 16
+```
+These are just the first 3×3 entries, to keep things simple.
 
+Step 2: Divide values at matching positions
+```text
+Try selecting a matrix position
+Row                Column
+160                16 
+DCT value          Table value
+
+Rounded result
+160 ÷ 16 = 10.00 → 10
+```
+The software repeats this process for all 64 DCT coefficients.
+
+
+Who decides quantization table to use? The JPEG encoder, influenced by the quality setting.
+
+Where is quantization table? Usually embedded inside the JPEG file.
+
+Are the values fixed? No. Different encoders and quality settings can produce different tables.
+```
+
+Why are the numbers different? To preserve visually important information while compressing less noticeable details.
 ---
 
 ## Chroma subsampling
@@ -300,7 +342,7 @@ we store roughly:
 ```
 4 Y + 1 Cb + 1 Cr
 ```
-That saves a lot of space. This is why, in JPEG 4:2:0, a larger image area can be represented by multiple Y blocks but fewer Cb/Cr blocks. And that is what leads to the 16×16 MCU structure the first paper is discussing.
+That saves a lot of space. This is why, in JPEG 4:2:0, a larger image area can be represented by multiple Y blocks but fewer Cb/Cr blocks. And that is what leads to the 16×16 MCU structure.
 
 ---
 
@@ -308,7 +350,7 @@ That saves a lot of space. This is why, in JPEG 4:2:0, a larger image area can b
 
 MCU means **Minimum Coded Unit**.
 
-This confused me at first because JPEG also uses 8×8 blocks. They are related, but they are not the same thing.
+This is confusing at first because JPEG also uses 8×8 blocks. They are related, but they are not the same thing.
 
 An 8×8 block is the block used for DCT.
 
@@ -316,7 +358,7 @@ An MCU is a group of JPEG blocks that are handled together.
 
 With 4:2:0 chroma subsampling, one MCU can cover a 16×16 area of the image (The MCU size depends on the chroma subsampling scheme).
 
-So I need to keep this distinction clear:
+So need to keep this distinction clear:
 
 ```text
 DCT block = 8×8
@@ -415,7 +457,7 @@ encode the remaining data efficiently
 store everything in JPEG format
 ```
 
-The main things I need to remember:
+Remember:
 
 - JPEG does not store raw RGB pixels directly.
 - DCT works on 8×8 blocks.
