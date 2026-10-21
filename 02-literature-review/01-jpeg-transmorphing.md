@@ -1,7 +1,7 @@
 # Paper notes
 **IMAGE TRANSMORPHING WITH JPEG BY LIN YUAN & TOURADJ IBRAHIMI**
 
-These are the main concepts I needed to understand before going through the transmorphing method in detail.
+JPEG transmorphing is a technique that changes how a JPEG image looks while keeping information inside the file that allows an authorized person to recover the original image.
 
 ---
 
