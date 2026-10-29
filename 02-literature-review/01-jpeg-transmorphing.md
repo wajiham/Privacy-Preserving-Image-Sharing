@@ -125,7 +125,7 @@ After dilation, the changed region becomes larger:
 ```
 
 The idea is not just to enlarge the region randomly. JPEG data is organized in blocks and MCUs, so if a small part of one MCU is changed, the paper treats the corresponding MCU as affected.This makes it easier to preserve and later replace the JPEG data for that region.
-![Dilation](./assets/images/Dilation.png)
+![Dilation](/assets/images/Dilation.png)
 
 ---
 
