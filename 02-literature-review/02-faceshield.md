@@ -407,9 +407,12 @@ FaceShield wants to reduce this similarity.
 
 ## 26. Average Loss
 
-Because FaceShield uses several surrogate models, each one contributes its own loss. The losses are combined by averaging them.
+Because FaceShield uses several surrogate models, each one contributes its own loss. The losses are combined by averaging them. Each model produces a loss value that tells FaceShield how well its current pixel changes achieve the privacy objective.
+A higher loss means the transformed face is harder to match to its original identity.
 
 > FaceShield tries to find pixel changes that work across several models, instead of overfitting to only one model.
+
+Averaging losses does not guarantee success against every model. A good average can still hide poor protection against one particular model.
 
 ---
 
